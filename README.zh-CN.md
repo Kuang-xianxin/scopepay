@@ -1,8 +1,8 @@
 # ScopePay
 
-**10月30日私有发布审阅：**最新英文成片138.666016秒，展示250美元模拟报价及另一次已完成的1美元官方Sandbox回执；命令行评委用例使用300美元。三种金额对应不同记录，不合并成同一笔交易。源码与视频URL待发布，材料审阅无需新交易。
+**10月31日公开源码复现：**[源码](https://github.com/Kuang-xianxin/scopepay)和[138.666秒英文视频](https://www.youtube.com/watch?v=j9u4mM1TA-I)已公开。已匿名克隆固定版本 `8aaf4e1309f66d58b3d50373898fe8e8d72d5e59`，新建 Python 3.12.7 虚拟环境，实际安装锁定依赖，并用空凭据、全新 SQLite 数据运行三个本地 HTTP 模拟场景。完整 AI/Sandbox 评委访问仍待私密交接，没有托管演示或最终投稿。视频的250美元模拟、命令行的300美元模拟、另一次已完成的1美元官方Sandbox回执是不同记录。
 
-**2026-10-28 / v1.2.1联调更新：**官方Sandbox OAuth、创建订单、测试买家同意、1美元虚拟capture、服务端核对回执全部完成。重复capture与刷新仍保留同一回执和一次派发。真实金额对象的可选breakdown字段暴露的整体相等判断缺陷已修复，金额/币种/商家/报价仍严格校验，30项相关回归通过，见[当前实证](docs/SANDBOX-20261028.md)。没有真实资金交易、公开发布或最终投稿。
+**2026-10-28 / v1.2.1联调更新：**官方Sandbox OAuth、创建订单、测试买家同意、1美元虚拟capture、服务端核对回执全部完成。重复capture与刷新仍保留同一回执和一次派发。真实金额对象的可选breakdown字段暴露的整体相等判断缺陷已修复，金额/币种/商家/报价仍严格校验，30项相关回归通过，见[当前实证](docs/SANDBOX-20261028.md)。没有真实资金交易或最终投稿；源码和视频已于后续公开。
 
 当前入口：[评委运行说明](docs/JUDGE-SETUP.md)、[功能证据对照](docs/SCORING-AND-EVIDENCE.md)、[英文提交草案](docs/SUBMISSION-20261028.md)、[138.666秒现有成片说明](docs/DEMO-STORYBOARD.md)、[本轮实现与面试学习](docs/SPRINT-LEARNING.md)。真实本地模型提取与本次手工输入沙箱订单分别有证据，不冒充同一条AI支付记录。
 
@@ -14,18 +14,31 @@ ScopePay 是私有采购审阅工作台：保存供应商报价，确定纳入�
 
 首页直接进入可搜索的采购列表。支持草稿保存/恢复、版本冲突提示、预算超限拦截、退回修改、撤销、过期和回执历史。界面切换中英文不会翻译或覆盖原始需求和用户输入。
 
-## 启动
+## 评委快速开始（Windows PowerShell）
 
-Python3.12 + FastAPI/Pydantic + PostgreSQL/Psycopg3；SQLite保留为本机后备；前端为离线可用的HTML/CSS/ES模块，无Node构建、无CDN。
+准备 Git 和 Python 3.12。默认评委路径使用 SQLite 与手工输入，不需要 PayPal 账号、模型下载、PostgreSQL、Node 构建或 CDN。`python` 可能指向其他版本，下面用 `py -3.12` 明确选择；没有 Windows Python 启动器时，可换成 Python 3.12 可执行文件的完整路径。
 
 ```powershell
-python -m venv .venv
+git clone --no-checkout https://github.com/Kuang-xianxin/scopepay.git scopepay-judge-8aaf4e1
+cd scopepay-judge-8aaf4e1
+git checkout --detach 8aaf4e1309f66d58b3d50373898fe8e8d72d5e59
+py -3.12 -m venv .venv
 .venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe -m pip install --no-clean -r requirements-lock.txt
-Copy-Item .env.product.example .env
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start.ps1
+.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe -m pip check
+if (Test-Path .env.judge) { throw 'Keep the existing config; use a new clone directory.' }
+if (Get-NetTCPConnection -State Listen | Where-Object LocalPort -eq 18231) { throw 'Port 18231 is occupied; choose an unused port. Do not stop its owner.' }
+$judgeConfig = (Get-Content .env.judge.example -Raw).Replace('127.0.0.1:18216', '127.0.0.1:18231').Replace('data/judge/scopepay.db', 'data/judge-18231/scopepay.db')
+$judgeConfig | Set-Content -Encoding utf8 .env.judge
+.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe scripts/run_local.py --config .env.judge
 ```
 
-打开启动器输出的本机8215端口地址。停止用`scripts/stop.ps1`，会验证进程身份且不删除文件。现有配置不要直接覆盖；当前私有安装已使用真实PostgreSQL，旧SQLite完整保留。新安装默认模拟处理器与SQLite，可按DATABASE.md迁移。
+打开 `http://127.0.0.1:18231`，保留前台终端，结束时用 Ctrl+C 停止本次进程。另开终端进入同一目录：
+
+```powershell
+.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe scripts/judge_scenario.py --url http://127.0.0.1:18231 --output data/judge-check-01.json
+```
+
+预期保留三个合成采购：300美元未知结果核对为唯一回执、撤销后拒绝捕获、实际过期后拒绝捕获；把确认金额改成301美元也会被拒绝。JSON 保存于 `data/judge-check-01.json`，回执明确为 `mode: simulation`、`payment_verified: false`。重复输出文件名会被拒绝；保留数据，再跑时使用新文件名。换端口需同步修改 `APP_URL` 与 `--url`。详细错误说明见[评委设置](docs/JUDGE-SETUP.md)。开发服务和原数据独立保留。
 
 ## 使用路径
 

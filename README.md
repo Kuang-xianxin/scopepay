@@ -1,6 +1,6 @@
 # ScopePay
 
-**Private publication review, October 30:** the current English video is 138.666016 seconds. It shows a USD 250 simulation and a separate existing USD 1.00 official Sandbox receipt. The command-line judge scenario intentionally uses USD 300. Source and video URLs are pending publication. See the recorded demo guide and judge setup; no new transaction is needed to review these artifacts.
+**Public source and judge check, October 31:** [source](https://github.com/Kuang-xianxin/scopepay) and the [138.666-second English video](https://www.youtube.com/watch?v=j9u4mM1TA-I) are public. A new anonymous clone of commit `8aaf4e1309f66d58b3d50373898fe8e8d72d5e59` was installed in a fresh Python 3.12.7 environment and exercised with empty credentials, SQLite and three actual local HTTP simulation scenarios. Full AI/Sandbox judge access still needs a private handoff; no hosted demo or final contest submission is claimed. The video shows a USD 250 simulation and a separate existing USD 1.00 official Sandbox receipt; the CLI scenario uses USD 300.
 
 **v1.2.1 integration update (2026-10-28):** official Sandbox OAuth → order → buyer approval → USD 1.00 virtual capture → server-verified receipt completed. Repeat capture and refresh kept one receipt and one dispatch. The provider's optional `amount.breakdown` exposed a whole-object equality bug, now fixed while retaining exact monetary and recipient checks; 30 related regressions pass. See [current integration evidence](docs/SANDBOX-20261028.md). Earlier v1.2 statements below describe the pre-integration build.
 
@@ -14,18 +14,31 @@ The home screen is a searchable purchase register. Drafts survive refresh, concu
 
 v1.1 adds approval-bound payment intents, durable finite reconciliation, network work outside database locks, bounded synchronous workers, safe GET retry and stale-browser-response protection. [Architecture and failure recovery](docs/HARDENING.md) and the [20-case reliability matrix](docs/ROBUSTNESS-MATRIX.md) distinguish implemented mechanisms, actual evidence and remaining limits.
 
-## Run
+## Judge quick start (Windows PowerShell)
 
-Python3.12, FastAPI/Pydantic, PostgreSQL via Psycopg3, optional local SQLite, and native browser ES modules. No frontend CDN or Node build.
+Use Git and Python 3.12. The default judge path uses SQLite and manual input: no PayPal account, model download, PostgreSQL setup, Node build or frontend CDN. `python` may select another installed version; `py -3.12` selects the supported interpreter explicitly. If the Windows launcher is unavailable, use the full path to a Python 3.12 executable.
 
 ```powershell
-python -m venv .venv
+git clone --no-checkout https://github.com/Kuang-xianxin/scopepay.git scopepay-judge-8aaf4e1
+cd scopepay-judge-8aaf4e1
+git checkout --detach 8aaf4e1309f66d58b3d50373898fe8e8d72d5e59
+py -3.12 -m venv .venv
 .venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe -m pip install --no-clean -r requirements-lock.txt
-Copy-Item .env.product.example .env
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start.ps1
+.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe -m pip check
+if (Test-Path .env.judge) { throw 'Keep the existing config; use a new clone directory.' }
+if (Get-NetTCPConnection -State Listen | Where-Object LocalPort -eq 18231) { throw 'Port 18231 is occupied; choose an unused port. Do not stop its owner.' }
+$judgeConfig = (Get-Content .env.judge.example -Raw).Replace('127.0.0.1:18216', '127.0.0.1:18231').Replace('data/judge/scopepay.db', 'data/judge-18231/scopepay.db')
+$judgeConfig | Set-Content -Encoding utf8 .env.judge
+.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe scripts/run_local.py --config .env.judge
 ```
 
-Open the loopback address printed by the launcher (port8215). The app refuses remote clients. Stop with `scripts/stop.ps1`. New installs default to the local simulated processor; the current private development installation uses real PostgreSQL. Use DATABASE.md to migrate existing data without deleting the original SQLite file.
+Open `http://127.0.0.1:18231`. Keep the first terminal running; Ctrl+C stops that foreground process. In a second terminal at the same repository root, run:
+
+```powershell
+.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe scripts/judge_scenario.py --url http://127.0.0.1:18231 --output data/judge-check-01.json
+```
+
+Expect three synthetic purchases: recover an uncertain USD 300 result into one receipt, reject revoked approval, and reject approval after real expiry. A changed USD 301 confirmation is also rejected. `data/judge-check-01.json` retains the receipt and errors; its receipt says `mode: simulation` and `payment_verified: false`. Reusing that output filename is refused. Keep the new data and choose a new filename for another run. See [judge setup](docs/JUDGE-SETUP.md) for exact expected errors and optional access. If changing ports, update both `APP_URL` and `--url`. Existing developer services and data are separate.
 
 ## Complete a purchase
 
@@ -53,4 +66,4 @@ AI is optional and never has payment authority. The historical0.5B semantic fail
 
 PostgreSQL tests accept `--postgres-config <private-json>` and retain a separate schema per test in `test_database`. `/api/health` reports liveness/configuration; `/api/ready` checks database readiness. `/api/metrics` contains bounded counters, not source data or keys. See [engineering learning notes](docs/LEARNING.md) for data flow and design tradeoffs.
 
-The local release builder uses a source-only allowlist. Private inputs, databases, credentials, logs, evidence, registration files and historical failure artifacts are never put in the release archive. No public repository push, cloud deployment, financial signup, real transaction, external message or final contest submission was performed.
+The local release builder uses a source-only allowlist. Private inputs, databases, credentials, logs, evidence, registration files and historical failure artifacts are never put in the release archive. Source and video publication are recorded; cloud deployment and final contest submission remain separate, incomplete steps. The October 31 check made no model or PayPal provider request.

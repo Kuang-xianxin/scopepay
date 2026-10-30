@@ -1,6 +1,6 @@
 # ScopePay — English Devpost content draft
 
-Prepared for private review, October 30, 2026. Not submitted. This is a content mapping to common Devpost fields; the authenticated form and any custom questions remain for the coordinator to inspect. No participant identity, team role, rights declaration or final acceptance has been filled on the entrant's behalf.
+Updated for private review, October 31, 2026. Source and video are public; Devpost draft 1270989 remains at 3/5 and is not submitted, according to the publication handoff. Testing-field privacy and any remaining custom questions are for the coordinator to verify. This document does not provide participant identity, team role, rights declarations or final acceptance.
 
 ## Project name
 ScopePay
@@ -33,13 +33,13 @@ One authorized official Sandbox run on October 28 completed OAuth, a USD 1.00 vi
 
 Separately, actual local Qwen3.5-4B extraction was checked on six synthetic bilingual cases, and one application/browser request saved and reread its suggestions. Semantic review was performed by assistants; this is not a population accuracy estimate or an independent human study.
 
-The local HTTP scenario covers altered-amount rejection, withdrawn and expired approval, simulated lost-response recovery, repeated receipt identity and export consistency. Its USD 300 scenario is distinct from the final video's USD 250 simulation and the official USD 1.00 Sandbox run. The current candidate contains unchanged executable/configuration/test inputs from the already exercised v1.2.1 build, with refreshed review documents.
+The local HTTP scenario covers altered-amount rejection, withdrawn and expired approval, simulated lost-response recovery, repeated receipt identity and export consistency. Its USD 300 scenario is distinct from the final video's USD 250 simulation and the official USD 1.00 Sandbox run. On October 31 the fixed 69-file public commit was anonymously cloned, installed in a new Python 3.12.7 venv and exercised with new SQLite data on port 18231. Pinned installation, pip check and all three scenarios passed; some dependency downloads came from pip cache. The documentation candidate leaves executable/configuration/dependency/test/static bytes unchanged and is still local.
 
 ## What was learned
 A matching total does not establish the right recipient. A timeout does not establish that a side effect failed. A source quotation does not establish that AI understood it. These facts need separate checks. The design deliberately keeps human authority and deterministic payment control outside the model.
 
 ## What's next
-Validate the purchase-review hypothesis with real target users, arrange judge access, and review ownership and publication. Authenticated multiuser hosting, live webhooks, real-provider lost-response testing, production payments, refunds, disputes and tax calculation are not established by this release. No customer traction, official score or prize is claimed.
+Validate the purchase-review hypothesis with real target users, arrange private full AI/Sandbox judge access, and review ownership and final submission. Authenticated multiuser hosting, live webhooks, real-provider lost-response testing, production payments, refunds, disputes and tax calculation are not established by this release. No customer traction, official score or prize is claimed.
 
 ## Built with
 Python; FastAPI; Pydantic; JavaScript; HTML; CSS; SQLite; PostgreSQL; Psycopg; HTTPX; Tenacity; PayPal Sandbox Orders v2; Qwen3.5-4B; llama.cpp/OpenAI-compatible local inference. PostgreSQL and local inference are optional for the credential-free simulation path. No sponsor-specific SDK prize usage is claimed.
@@ -50,8 +50,8 @@ Codex substantially generated and revised implementation, tests, debugging chang
 The requested coding runtime was gpt-6-astra with ultra reasoning; the repository does not independently attest the served coding-model identity. No teammate contribution, unaided authorship, personal coding percentage or interview is asserted. The entrant must supply and review their actual decisions, implementation/review work, team membership and rights before any ownership or originality declaration.
 
 ## Links and testing fields
-- Public source repository: **PENDING PUBLICATION — no URL yet**.
-- Publicly visible YouTube video: **PENDING PUBLICATION — no URL yet**. Local final: ScopePay-demo-en-final.mp4, 138.666016 seconds, English narration/captions.
+- Public source repository: https://github.com/Kuang-xianxin/scopepay — reviewed public commit `8aaf4e1309f66d58b3d50373898fe8e8d72d5e59`.
+- Publicly visible YouTube video: https://www.youtube.com/watch?v=j9u4mM1TA-I — 138.666016 seconds, English narration; timed English subtitles uploaded per the publication receipt. This local check did not reverify public caption-track playback.
 - Hosted demo: **NOT DEPLOYED**. Supported access is a local build described in docs/JUDGE-SETUP.md.
 - Judge testing instructions: Python 3.12; install pinned dependencies; use .env.judge.example with scripts/run_local.py; run scripts/judge_scenario.py. This needs no Sandbox credentials, model download or PostgreSQL. It clearly uses simulation.
 - Full AI/Sandbox access: **NEEDS-HUMAN** for an authorized local model endpoint and private Sandbox test access. Do not paste secrets into a public field or repository; the coordinator must verify a suitably private handoff mechanism. Existing successful integration is evidence, not a claim that judge access has already been delivered.

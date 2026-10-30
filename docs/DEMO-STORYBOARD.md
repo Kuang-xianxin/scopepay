@@ -1,6 +1,6 @@
 # Recorded demonstration guide — 138.666016 seconds
 
-Current local master: `ScopePay-demo-en-final.mp4`, with matching English `.srt`. SHA256: `e6a341c3452af150fc3a6aa90f22dd5499ec7f74b8cf3083740ebc223f756623`. It is 1920×1080, H.264/AAC. Public YouTube URL: **PENDING PUBLICATION**. This guide replaces the earlier 165-second recording plan. No new Sandbox transaction or re-recording is needed to review this completed video.
+Current local master: `ScopePay-demo-en-final.mp4`, with matching English `.srt`. SHA256: `e6a341c3452af150fc3a6aa90f22dd5499ec7f74b8cf3083740ebc223f756623`. It is 1920×1080, H.264/AAC. Public YouTube URL: https://www.youtube.com/watch?v=j9u4mM1TA-I (publication recorded October 30; this local reproduction round did not revisit playback). This guide replaces the earlier 165-second recording plan. No new Sandbox transaction or re-recording is needed to review this completed video. The video itself is unchanged.
 
 The recording uses real application screens with a native arrow cursor, edited scene transitions and synthetic English narration. It shows a saved, previously verified local-model proposal; it does not claim fresh inference in this recording. The local failure scenario and the existing official Sandbox receipt are separate evidence. Narration was generated with MiniMax speech-2.8-hd; it is not the entrant's recorded voice. Original technical checks include full decode, timing and loudness; they do not establish a person's subjective listening approval.
 

@@ -1,6 +1,6 @@
-# Competition fit and factual evidence — reviewed 2026-10-30
+# Competition fit and factual evidence — judge reproduction update 2026-10-31
 
-**15:31 evidence update, v1.2.1:** official Sandbox OAuth, create, buyer approval, capture and server GET succeeded for one USD 1.00 virtual transaction; repeated capture/refresh retained one dispatch and the same receipt. The first GET revealed optional amount metadata that strict whole-object equality rejected; 30 affected regressions pass after the fix. AI extraction remains a separately verified path, not part of this specific manual-input order. Webhook delivery, real-provider lost capture response, public video/repository and submission remain pending. Detailed evidence boundaries: [Sandbox run](SANDBOX-20261028.md).
+**October 28 integration evidence, v1.2.1:** official Sandbox OAuth, create, buyer approval, capture and server GET succeeded for one USD 1.00 virtual transaction; repeated capture/refresh retained one dispatch and the same receipt. The first GET revealed optional amount metadata that strict whole-object equality rejected; 30 affected regressions pass after the fix. AI extraction remains a separately verified path, not part of this specific manual-input order. Webhook delivery, real-provider lost capture response and final submission remain pending. Source and video are now public; see the [current judge setup](JUDGE-SETUP.md). Detailed integration boundaries: [Sandbox run](SANDBOX-20261028.md).
 
 ## Official requirements, summarized
 
@@ -16,7 +16,7 @@ Access boundary: the earlier Egolite visit displayed a Cloudflare challenge; tha
 | Design | Save a purchase, review scope, pay or recover, export | Existing bilingual workspace; real local HTTP and Egolite screenshots | No usability study. |
 | Impact | Small studios reviewing a service package and avoiding ambiguous repeat-payment decisions | Explicit $300 included work, excluded hosting, deadline, withdrawn authority | Audience and value remain hypotheses; no interviews, adoption or savings numbers. |
 | Innovation | A narrow approval boundary survives changes and uncertain payment results | Snapshot binding plus expiry/revocation plus recovery shown together | No claim of being first or commercially unique. |
-| Presentation | One service-purchase story with failure and recovery | Completed 138.666016-second English video: saved model suggestions, USD 250 simulation, separate USD 1 Sandbox receipt | Public upload and entrant review pending; not uninterrupted AI-to-Sandbox capture. |
+| Presentation | One service-purchase story with failure and recovery | Public 138.666016-second English video: saved model suggestions, USD 250 simulation, separate USD 1 Sandbox receipt | Final entrant declarations remain pending; not uninterrupted AI-to-Sandbox capture. |
 
 ## Functionality matrix
 
@@ -29,7 +29,7 @@ Access boundary: the earlier Egolite visit displayed a Cloudflare challenge; tha
 | Official OAuth / Orders adapter | Yes, configurable | Actual OAuth, create, buyer approval, capture and GET; one USD 1.00 virtual completion | One acceptance run only; no production payments or live webhook delivery. |
 | Merchant match | Yes, added this sprint | Wrong-merchant failure reproduced then blocked before capture | Seller must be the configured app account, not arbitrary vendor payout. |
 | Low-risk readiness preflight | Yes | Offline CLI plus fixture-only OAuth contract tests | OAuth alone cannot prove merchant identity or checkout. |
-| Public release / submission | Prepared privately | Source allowlist, SHA256 manifest, actual archive extraction and local HTTP smoke | No public push, deployment, video or final upload. |
+| Public release / submission | Source and video public; Devpost draft | Fixed public commit anonymously cloned; new Python 3.12.7 venv, pinned install, pip check and three actual local HTTP simulation scenarios passed October 31 | No hosted application or final submission; full AI/Sandbox judge access remains to be arranged privately. |
 
 ## API evidence
 

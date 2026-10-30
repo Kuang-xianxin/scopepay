@@ -6,25 +6,29 @@ ScopePay runs on Python 3.12 with a browser. The default demonstration is a clea
 
 ## Install and run (Windows PowerShell)
 
-From the extracted repository root, in a new directory:
+Start with the anonymous clone and pinned checkout in the [English quick start](../README.md#judge-quick-start-windows-powershell) or [中文快速开始](../README.zh-CN.md). Use a new clone directory and explicitly select Python 3.12. From its root:
 
 ```powershell
-python -m venv .venv
+py -3.12 -m venv .venv
 .venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe -m pip install --no-clean -r requirements-lock.txt
-Copy-Item .env.judge.example .env.judge
+.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe -m pip check
+if (Test-Path .env.judge) { throw 'Keep the existing config; use a new clone directory.' }
+if (Get-NetTCPConnection -State Listen | Where-Object LocalPort -eq 18231) { throw 'Port 18231 is occupied; choose an unused port. Do not stop its owner.' }
+$judgeConfig = (Get-Content .env.judge.example -Raw).Replace('127.0.0.1:18216', '127.0.0.1:18231').Replace('data/judge/scopepay.db', 'data/judge-18231/scopepay.db')
+$judgeConfig | Set-Content -Encoding utf8 .env.judge
 .venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe scripts/run_local.py --config .env.judge
 ```
 
-Open `http://127.0.0.1:18216`. The command stays in the foreground; Ctrl+C stops that process. If the port is occupied, inspect its owner or choose a different unused port in this config's `APP_URL`; do not kill an unknown listener. `DATABASE_PATH` is relative to the repository root unless absolute. Keep each judge run's data directory. The explicit config does not merge the repository `.env` or inherited provider environment. Do not copy development credentials.
+Open `http://127.0.0.1:18231`. The command stays in the foreground; Ctrl+C stops that process. If the port is occupied, choose a different unused port in this config's `APP_URL` and the scenario's `--url`; do not kill an unknown listener. `DATABASE_PATH` is relative to the repository root unless absolute. Keep each judge run's data directory. The explicit config does not merge the repository `.env` or inherited provider environment. Do not copy development credentials. The example file's original 18216 port is replaced only in this new local config.
 
-The release was extracted and exercised using the installed project Python environment; this sprint did not repeat the prior clean dependency installation. Dependency pins are in `requirements-lock.txt`. Previous 1.1 clean installation and PostgreSQL results remain historical evidence, not fresh 1.2 measurements.
+On October 31, the public commit `8aaf4e1309f66d58b3d50373898fe8e8d72d5e59` (69 tracked files) was anonymously cloned into a new directory and installed in a new Python 3.12.7 venv with system site-packages disabled. Pinned installation and `pip check` passed. Pip reused some cached downloads; this was a fresh environment, not a cache-free download or fresh OS. Actual HTTP checks used port 18231 and an empty `data/judge-18231` database. No application code, dependency or example-config change was needed. The first one-off harness attempt stopped before startup on a PowerShell empty-listener exit code; its failure was retained and the corrected harness passed. This check did not rerun PostgreSQL, browser interaction, models or official Sandbox. The owned test listener was stopped afterwards.
 
 ## Five-minute functional check
 
 Use another terminal in the same directory:
 
 ```powershell
-.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe scripts/judge_scenario.py --url http://127.0.0.1:18216 --output data/judge-check-01.json
+.venv/Scripts/python.exe scripts/safe_run.py .venv/Scripts/python.exe scripts/judge_scenario.py --url http://127.0.0.1:18231 --output data/judge-check-01.json
 ```
 
 This explicitly synthetic, manual-input scenario uses actual local HTTP. It refuses to run if the server reports Sandbox mode. It retains three purchases:
@@ -34,6 +38,24 @@ This explicitly synthetic, manual-input scenario uses actual local HTTP. It refu
 3. A separate approval expires after four seconds of real elapsed time. Capture is rejected. No system clock is changed.
 
 Open the returned URLs or refresh the purchase register. The payment mode label remains visible. Export the receipt from the UI. Reusing an output filename is refused; choose a fresh filename for another run. Do not delete previous evidence to rerun.
+
+The retained JSON must say `official_sandbox_verified: false`, `model_called: false`, and `source_kind: manual_synthetic`. The recovered receipt must say `mode: simulation`, `payment_verified: false`, and `total_cents: 30000`. `same_receipt_on_repeat` and `export_verified` must both be true. These fields are deliberate evidence boundaries.
+
+### Expected errors and recovery
+
+| Situation | Expected result | Action |
+|---|---|---|
+| Altered USD 301 confirmation | HTTP 409, `confirmation_amount_currency_or_fingerprint_mismatch` | Confirm the locked quote's USD 300 amount. |
+| Simulated lost capture response | HTTP 504, `simulation_response_lost_verify_status` | Read Unknown, then reconcile the same simulated order into one receipt. |
+| Revoked approval | HTTP 409, `quote_approval_revoked` | A withdrawn approval cannot authorize capture. |
+| Approval expired after four seconds | HTTP 409, `approval_expired_use_revision` | Create a revision and obtain a new approval for future work. |
+| AI button with empty `OPENAI_MODEL` | HTTP 503, `model_not_configured` | Use manual entry or arrange an authorized running local model. This response makes no model request. |
+| Reusing the scenario output filename | Exit 1, `Refusing to overwrite evidence` | Choose a new filename; keep the previous JSON. |
+| Missing explicit config | Exit 1, `Invalid explicit configuration; no values logged.` | Check the file path; do not fall back to the developer `.env`. |
+| Blank Sandbox template with offline preflight | Exit 2, `configuration_incomplete`, zero orders/captures | Private authorized setup is pending. Do not add `--oauth` just to clear this warning. |
+| Non-loopback scenario URL | Exit 1, `Only a loopback HTTP origin is allowed` | Use the local APP_URL. No remote request is made. |
+
+Dependency installation needs network/package access; a venv alone does not install dependencies. Keep Python 3.12 and the lockfile unchanged when diagnosing installation errors. The Windows commands above are the verified platform; Linux/macOS installation has not been exercised in this round.
 
 ## Optional AI path
 
@@ -69,7 +91,7 @@ For optional AI on a judge-owned machine, set `OPENAI_MODEL=qwen3.5-4b` only whe
 
 ## Access for judges
 
-The release preview is private; no public repository or video URL exists from this sprint. Before submission, the entrant must approve source/video publication and arrange required test access for judges via an appropriate private submission mechanism. Never commit merchant secrets to satisfy an access checklist. The currently verified build is loopback-only, so it must not be advertised as a remote hosted demo. A local functional build is permitted by the rules, but credentials/model access needed to test the full integration still require a private handoff. The authenticated form has not been inspected this round. If it cannot provide suitably private access, the entrant must resolve that with the organizers. No external contact has been made.
+The [source repository](https://github.com/Kuang-xianxin/scopepay) and [English video](https://www.youtube.com/watch?v=j9u4mM1TA-I) are public; the Devpost draft remains unsubmitted. The October 31 local work does not publish its document corrections automatically. The build is loopback-only and is not a remotely hosted demo. Full AI/Sandbox access still needs a private handoff: the coordinator must verify testing-field visibility, assign an authorized model endpoint, arrange the existing authorized test app/seller/buyer access and specify an availability/support period. No credential delivery, ready full-access environment or organizer agreement is claimed. Never put merchant secrets in public source or public project text. A public local simulation and existing integration evidence do not by themselves provide judges with the full integration environment.
 
 ## Contract checks
 
