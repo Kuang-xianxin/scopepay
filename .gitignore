@@ -1,0 +1,9 @@
+.venv/
+.env
+.env.judge
+.env.sandbox
+data/
+__pycache__/
+.pytest_cache/
+*.log
+runtime.json

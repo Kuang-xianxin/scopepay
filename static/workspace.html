@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>ScopePay · 采购工作台</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script type="module" src="/static/app.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to workspace</a>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="/" aria-label="ScopePay"
+          ><svg viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="3" y="3" width="20" height="20" rx="4" />
+            <path d="M12 12h17v17H12z" />
+            <path d="m16 20 4 4 6-8" /></svg
+          ><span>ScopePay</span></a
+        >
+        <div class="workspace-label" data-text="workspace">采购工作区</div>
+        <nav aria-label="Workspace">
+          <button class="nav-item active" data-nav="all">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="3" width="16" height="18" rx="2" />
+              <path d="M8 8h8M8 12h8M8 16h5" /></svg
+            ><span data-text="purchases">全部采购</span>
+          </button>
+          <button class="nav-item" data-nav="attention">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v6M12 16v1" /></svg
+            ><span data-text="attention">待处理</span
+            ><span id="attentionCount" class="nav-count">0</span>
+          </button>
+          <button class="nav-item" data-nav="paid">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 3h14v18l-3-2-4 2-4-2-3 2zM8 8h8M8 12h5" /></svg
+            ><span data-text="receipts">回执</span>
+          </button>
+        </nav>
+        <div class="sidebar-bottom">
+          <span class="connection-dot"></span>
+          <div>
+            <strong data-text="privateWorkspace">私有工作区</strong
+            ><small>127.0.0.1 · ScopePay</small>
+          </div>
+        </div>
+      </aside>
+      <div class="main-shell">
+        <header class="topbar">
+          <span id="breadcrumb" data-text="purchases">全部采购</span>
+          <div class="top-actions">
+            <span id="processor" class="mode-badge">…</span
+            ><button id="language" class="text-button" type="button">
+              English
+            </button>
+          </div>
+        </header>
+        <main id="content" tabindex="-1">
+          <div id="notice" role="alert" tabindex="-1" hidden></div>
+          <div id="view" aria-live="polite">
+            <div class="loading-skeleton"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <dialog id="decisionDialog" aria-labelledby="decisionTitle">
+      <form id="decisionForm">
+        <h2 id="decisionTitle"></h2>
+        <p id="decisionText"></p>
+        <div id="decisionFields"></div>
+        <div class="dialog-actions">
+          <button type="button" id="cancelDecision" class="secondary"></button
+          ><button type="submit" id="commitDecision" class="danger"></button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

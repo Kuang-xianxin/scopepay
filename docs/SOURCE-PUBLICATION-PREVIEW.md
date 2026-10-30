@@ -1,0 +1,11 @@
+# Private source publication preview
+
+No repository was created or pushed, no public site was deployed and no submission was uploaded. This document describes a reviewable source package, not a public release.
+
+The package builder includes an explicit allowlist of code, static workspace assets, tests, dependency pins, example configurations with empty credentials, the existing MIT license and the current judge/submission/storyboard documents. The October 30 candidate freezes 69 individual source paths in PUBLIC-SOURCE-ALLOWLIST.txt and hashes them in PUBLIC-SOURCE-MANIFEST.json beside the archive. Publication must use that exact reviewed list. Each included file has a SHA256 in the adjacent manifest. The October 28 v1.2.1 archive was extracted and exercised over real loopback HTTP. The October 30 candidate changes documents only, is freshly extracted and compared byte-for-byte with current source, and retains exactly the same executable/configuration/dependency/test/static inputs. No repeat runtime test is represented as fresh evidence.
+
+Excluded: real `.env` files, private configs, all data/test databases, session keys, runtime process records, raw evidence, account/registration information, previous private deliveries, videos, model weights and `.venv`. No file deletion is used by the builder. Existing archives cannot be overwritten.
+
+Before publication, the entrant reviews contribution/ownership and licensing statements, confirms that the exact reviewed source list is suitable, adds genuine repository and video URLs, and authorizes publication. Use the archive allowlist as the publication boundary; do not run `git add .` over the development directory. Provider secrets for judge access belong in an appropriate private channel, never the public repository.
+
+Release verification distinguishes file integrity, runnable extracted code and official platform behavior. The October 28 v1.2.1 follow-up adds a real Sandbox order, buyer approval, capture and independent server verification to the local checks. This establishes one virtual transaction, not production readiness, webhook delivery, general AI accuracy or customer adoption. See SANDBOX-20261028.md for boundaries.
